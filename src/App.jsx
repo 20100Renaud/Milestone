@@ -5,10 +5,10 @@ import Controls from "./components/controls/Controls";
 
 function App() {
   return (
-    <div className="flex flex-col w-full min-h-screen bg-black justify-content ">
+    <div className="flex flex-col h-screen bg-black ">
       <Header />
 
-      <main className="flex-1">
+      <main className="flex-1 overflow-hidden">
         <MapView />
       </main>
 
