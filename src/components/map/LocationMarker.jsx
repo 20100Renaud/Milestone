@@ -3,6 +3,7 @@ import { useMap } from "react-leaflet";
 import { useEffect } from "react";
 
 function LocationMarker({ location }) {
+  // Update location on each gps new response
   const map = useMap();
 
   useEffect(() => {
