@@ -1,19 +1,17 @@
-import useLocation from "../../hooks/useLocation";
-
-function StatsPanel() {
-  const { location, error } = useLocation();
-
+function StatsPanel({ location, error, route }) {
   return (
     <div className="bg-slate-100 p-4">
       {error && <p>{error}</p>}
 
       {location && (
         <>
-          <p>Lat: {location.latitude}</p>
+          <p>Lat: {location.latitude.toFixed(6)}</p>
 
-          <p>Lng: {location.longitude}</p>
+          <p>Lng: {location.longitude.toFixed(6)}</p>
 
-          <p>Accuracy: {location.accuracy}m</p>
+          <p>Accuracy: {location.accuracy.toFixed(1)} m</p>
+
+          <p>Recorded points: {route.length}</p>
         </>
       )}
     </div>
