@@ -17,7 +17,7 @@ function MapView({ location, route }) {
       <LocationMarker location={location} />
 
       <Polyline
-        positions={route.map((point) => [point.lat, point.lng])}
+        positions={route.map((point) => [point.latitude, point.longitude])}
         pathOptions={{
           color: "#2563eb",
           weight: 5,

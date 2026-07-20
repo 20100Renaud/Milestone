@@ -1,13 +1,32 @@
-function Controls() {
+function Controls({
+    isRecording,
+    onStart,
+    onStop,
+}) {
+
   return (
     <div className="flex justify-around bg-slate-900 p-4">
-      <button className="rounded bg-green-600 px-4 py-2 text-white">
-        Start
-      </button>
+      {!isRecording ? (
+        <button
+          onClick={onStart}
+          className="rounded bg-green-600 px-4 py-2 text-white"
+        >
+          Start a new journey
+        </button>
+      ) : (
+        <button
+          onClick={onStop}
+          className="rounded bg-red-600 px-4 py-2 text-white"
+        >
+          Stop
+        </button>
+      )}
 
-      <button className="rounded bg-blue-600 px-4 py-2 text-white">Mark</button>
-
-      <button className="rounded bg-red-600 px-4 py-2 text-white">Stop</button>
+      {isRecording && (
+        <button className="rounded bg-blue-600 px-4 py-2 text-white">
+          Mark
+        </button>
+      )}
     </div>
   );
 }

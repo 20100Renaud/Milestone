@@ -7,7 +7,8 @@ import useTracker from "./hooks/useTracker";
 
 function App() {
   const { location, error } = useLocation();
-  const { route } = useTracker(location);
+  const { route, isRecording, startRecording, stopRecording } =
+    useTracker(location);
 
   return (
     <div className="flex flex-col h-screen bg-black ">
@@ -22,7 +23,11 @@ function App() {
 
       <StatsPanel location={location} error={error} route={route} />
 
-      <Controls />
+      <Controls
+        isRecording={isRecording}
+        onStart={startRecording}
+        onStop={stopRecording}
+      />
     </div>
   );
 }
