@@ -1,5 +1,6 @@
 export function locationToPoint(location) {
   return {
+    id: crypto.randomUUID(),
     latitude: location.latitude,
     longitude: location.longitude,
     accuracy: location.accuracy,

@@ -1,9 +1,4 @@
-function Controls({
-    isRecording,
-    onStart,
-    onStop,
-}) {
-
+function Controls({ isRecording, onStart, onStop, onMark }) {
   return (
     <div className="flex justify-around bg-slate-900 p-4">
       {!isRecording ? (
@@ -23,7 +18,10 @@ function Controls({
       )}
 
       {isRecording && (
-        <button className="rounded bg-blue-600 px-4 py-2 text-white">
+        <button
+          onClick={onMark}
+          className="rounded bg-blue-600 px-4 py-2 text-white disabled:bg-slate-500"
+        >
           Mark
         </button>
       )}

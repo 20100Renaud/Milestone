@@ -1,8 +1,8 @@
-import { MapContainer, TileLayer, Polyline } from "react-leaflet";
+import { MapContainer, TileLayer, Polyline, Marker } from "react-leaflet";
 import LocationMarker from "./LocationMarker";
 
-function MapView({ location, route }) {
 
+function MapView({ location, route, waypoints }) {
   return (
     <MapContainer
       center={[48.8566, 2.3522]}
@@ -17,12 +17,22 @@ function MapView({ location, route }) {
       <LocationMarker location={location} />
 
       <Polyline
-        positions={route.map((point) => [point.latitude, point.longitude])}
+        positions={(route ?? []).map((point) => [
+          point.latitude,
+          point.longitude,
+        ])}
         pathOptions={{
           color: "#2563eb",
           weight: 5,
         }}
       />
+
+      {(waypoints ?? []).map((waypoint) => (
+        <Marker
+          key={waypoint.id}
+          position={[waypoint.latitude, waypoint.longitude]}
+        />
+      ))}
     </MapContainer>
   );
 }

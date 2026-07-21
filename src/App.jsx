@@ -7,26 +7,39 @@ import useTracker from "./hooks/useTracker";
 
 function App() {
   const { location, error } = useLocation();
-  const { route, isRecording, startRecording, stopRecording } =
-    useTracker(location);
+  const {
+    route,
+    waypoints,
+    isRecording,
+    startRecording,
+    stopRecording,
+    addWaypoint,
+  } = useTracker(location);
 
   return (
     <div className="flex flex-col h-screen bg-black ">
       <Header />
 
       <main className="flex-1 overflow-hidden">
-        <MapView location={location} route={route} />
-        {/*
-        Later:
-        <MapView location={location} route={route} waypoints={waypoints} /> */}
+        <MapView
+          location={location}
+          route={route}
+          waypoints={waypoints}
+        />
       </main>
 
-      <StatsPanel location={location} error={error} route={route} />
+      <StatsPanel
+        location={location}
+        error={error}
+        route={route}
+        waypoints={waypoints}
+      />
 
       <Controls
         isRecording={isRecording}
         onStart={startRecording}
         onStop={stopRecording}
+        onMark={addWaypoint}
       />
     </div>
   );
