@@ -1,15 +1,29 @@
 const STORAGE_KEY = "milestone-journeys";
 
+// GET
 export function loadJourneys() {
-  const data = localStorage.getItem(STORAGE_KEY);
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
 
-  if (!data) {
+    return data ? JSON.parse(data) : [];
+  } catch {
     return [];
   }
-
-  return JSON.parse(data);
 }
 
-export function saveJourneys(journeys) {
+// PUT
+export function saveJourney(journey) {
+  const journeys = loadJourneys();
+  const exists = journeys.some((j) => j.id === journey.id);
+
+  if (exists) return;
+
+  journeys.push(journey);
+
   localStorage.setItem(STORAGE_KEY, JSON.stringify(journeys));
+}
+
+// DELETE
+export function clearJourneys() {
+  localStorage.removeItem(STORAGE_KEY);
 }

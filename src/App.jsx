@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/layout/Header";
 import MapView from "./components/map/MapView";
 import StatsPanel from "./components/stats/StatsPanel";
@@ -6,6 +6,7 @@ import Controls from "./components/controls/Controls";
 import useLocation from "./hooks/useLocation";
 import useTracker from "./hooks/useTracker";
 import WaypointEditor from "./components/waypoints/WaypointEditor";
+import { saveJourney } from "./services/storage";
 
 function App() {
   const { location, error } = useLocation();
@@ -13,6 +14,7 @@ function App() {
   const {
     route,
     waypoints,
+    journey,
     isRecording,
     startRecording,
     stopRecording,
@@ -31,6 +33,15 @@ function App() {
       setSelectedWaypointId(id);
     }
   }
+
+  // Save journey
+  useEffect(() => {
+    if (!journey) return;
+
+    console.log("Saving journey", journey);
+    
+    saveJourney(journey);
+  }, [journey]);
 
   return (
     <div className="flex flex-col h-screen bg-black ">
