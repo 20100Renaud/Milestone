@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-function WaypointEditor({ waypoint, onSave }) {
+function WaypointEditor({ waypoint, onSave, onClose }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -41,6 +41,8 @@ function WaypointEditor({ waypoint, onSave }) {
       title: title.trim(),
       description: description.trim(),
     });
+
+    onClose();
   }
 
   return (
