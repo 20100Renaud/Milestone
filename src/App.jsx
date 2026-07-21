@@ -6,11 +6,11 @@ import Controls from "./components/controls/Controls";
 import useLocation from "./hooks/useLocation";
 import useTracker from "./hooks/useTracker";
 import WaypointEditor from "./components/waypoints/WaypointEditor";
-import { saveJourney } from "./services/storage";
+import { saveJourney, loadJourneys } from "./services/storage";
+import JourneyList from "./components/journeys/JourneyList";
 
 function App() {
   const { location, error } = useLocation();
-  const [selectedWaypointId, setSelectedWaypointId] = useState(null);
   const {
     route,
     waypoints,
@@ -22,8 +22,13 @@ function App() {
     updateWaypoint,
   } = useTracker(location);
 
+  const [selectedWaypointId, setSelectedWaypointId] = useState(null);
+  const [selectedJourney, setSelectedJourney] = useState(null);
+  const [journeys, setJourneys] = useState(loadJourneys);
+
   const selectedWaypoint =
     waypoints.find((point) => point.id === selectedWaypointId) ?? null;
+
 
   // Mark id
   function handleMark() {
@@ -34,13 +39,18 @@ function App() {
     }
   }
 
+  // Manage start
+  function handleStart() {
+    setSelectedJourney(null);
+    startRecording();
+  }
+
   // Save journey
   useEffect(() => {
     if (!journey) return;
 
-    console.log("Saving journey", journey);
-    
     saveJourney(journey);
+    setJourneys(loadJourneys());
   }, [journey]);
 
   return (
@@ -50,8 +60,8 @@ function App() {
       <main className="flex-1 overflow-hidden">
         <MapView
           location={location}
-          route={route}
-          waypoints={waypoints}
+          route={selectedJourney?.route ?? route}
+          waypoints={selectedJourney?.waypoints ?? waypoints}
           isRecording={isRecording}
           selectedWaypoint={selectedWaypoint}
           onSelectWaypoint={setSelectedWaypointId}
@@ -61,8 +71,8 @@ function App() {
       <StatsPanel
         location={location}
         error={error}
-        route={route}
-        waypoints={waypoints}
+        route={selectedJourney?.route ?? route}
+        waypoints={selectedJourney?.waypoints ?? waypoints}
       />
 
       <WaypointEditor
@@ -71,9 +81,11 @@ function App() {
         onClose={() => setSelectedWaypointId(null)}
       />
 
+      <JourneyList journeys={journeys} onSelectJourney={setSelectedJourney} />
+
       <Controls
         isRecording={isRecording}
-        onStart={startRecording}
+        onStart={handleStart}
         onStop={stopRecording}
         onMark={handleMark}
       />

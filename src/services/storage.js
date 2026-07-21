@@ -21,6 +21,8 @@ export function saveJourney(journey) {
   journeys.push(journey);
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(journeys));
+
+  console.log("Stored journeys:", localStorage.getItem(STORAGE_KEY));
 }
 
 // DELETE

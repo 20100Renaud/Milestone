@@ -3,6 +3,8 @@ import { useMap } from "react-leaflet";
 import { useEffect } from "react";
 
 function LocationMarker({ location }) {
+  // add follow={ !selectedJourney } if on an old journey, the map jump back to the current location
+
   // Update location on each gps new response
   const map = useMap();
 

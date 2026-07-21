@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { locationToPoint, distanceBetween } from "../utils/geo";
 
-export default function useTracker(location, onJourneyCompleted) {
+export default function useTracker(location) {
   const [route, setRoute] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
   const [waypoints, setWaypoints] = useState([]);
@@ -74,27 +74,21 @@ export default function useTracker(location, onJourneyCompleted) {
   function stopRecording() {
     if (!isRecording) return;
 
-    const point = createWaypoint("end");
+    const endPoint = createWaypoint("end");
 
-    if (point) {
-      setWaypoints((prev) => [...prev, point]);
-    }
-
-    setIsRecording(false);
+    const completedWaypoints = endPoint ? [...waypoints, endPoint] : waypoints;
 
     const completedJourney = {
       id: crypto.randomUUID(),
       startedAt: route[0]?.timestamp ?? Date.now(),
       endedAt: Date.now(),
       route,
-      waypoints: [...waypoints, endPoint],
+      waypoints: completedWaypoints,
     };
 
-    if (onJourneyCompleted) {
-      onJourneyCompleted(journey);
-    }
-
+    setWaypoints(completedWaypoints);
     setJourney(completedJourney);
+    setIsRecording(false);
   }
 
   // Clear route
