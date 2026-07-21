@@ -1,4 +1,5 @@
-import { MapContainer, TileLayer, Polyline, Marker } from "react-leaflet";
+import { MapContainer, TileLayer, Polyline } from "react-leaflet";
+import WaypointMarker from "./WaypointMarker";
 import LocationMarker from "./LocationMarker";
 import { startIcon, markIcon, endIcon } from "../../components/map/icons";
 
@@ -18,8 +19,14 @@ function getIcon(type) {
 }
 
 
-function MapView({ location, route, waypoints, isRecording, selectedWaypoint,
-    onSelectWaypoint }) {
+function MapView({
+  location,
+  route,
+  waypoints,
+  isRecording,
+  selectedWaypoint,
+  onSelectWaypoint,
+}) {
   return (
     <MapContainer
       center={[48.8566, 2.3522]}
@@ -44,11 +51,12 @@ function MapView({ location, route, waypoints, isRecording, selectedWaypoint,
         }}
       />
 
-      {(waypoints ?? []).map((point) => (
-        <Marker
+      {waypoints.map((point) => (
+        <WaypointMarker
           key={point.id}
           waypoint={point}
           icon={getIcon(point.type)}
+          selected={selectedWaypoint?.id === point.id}
           onSelect={onSelectWaypoint}
         />
       ))}

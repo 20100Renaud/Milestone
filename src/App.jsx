@@ -16,6 +16,7 @@ function App() {
     isRecording,
     startRecording,
     stopRecording,
+    addWaypoint,
     updateWaypoint,
   } = useTracker(location);
 
@@ -40,6 +41,7 @@ function App() {
           location={location}
           route={route}
           waypoints={waypoints}
+          isRecording={isRecording}
           selectedWaypoint={selectedWaypoint}
           onSelectWaypoint={setSelectedWaypointId}
         />
