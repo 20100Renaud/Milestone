@@ -1,8 +1,25 @@
 import { MapContainer, TileLayer, Polyline, Marker } from "react-leaflet";
 import LocationMarker from "./LocationMarker";
+import { startIcon, markIcon, endIcon } from "../../components/map/icons";
 
 
-function MapView({ location, route, waypoints }) {
+// Associate icons with types
+function getIcon(type) {
+  switch (type) {
+    case "start":
+      return startIcon;
+
+    case "end":
+      return endIcon;
+
+    default:
+      return markIcon;
+  }
+}
+
+
+function MapView({ location, route, waypoints, isRecording, selectedWaypoint,
+    onSelectWaypoint }) {
   return (
     <MapContainer
       center={[48.8566, 2.3522]}
@@ -14,7 +31,7 @@ function MapView({ location, route, waypoints }) {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      <LocationMarker location={location} />
+      {!isRecording && <LocationMarker location={location} />}
 
       <Polyline
         positions={(route ?? []).map((point) => [
@@ -27,10 +44,12 @@ function MapView({ location, route, waypoints }) {
         }}
       />
 
-      {(waypoints ?? []).map((waypoint) => (
+      {(waypoints ?? []).map((point) => (
         <Marker
-          key={waypoint.id}
-          position={[waypoint.latitude, waypoint.longitude]}
+          key={point.id}
+          waypoint={point}
+          icon={getIcon(point.type)}
+          onSelect={onSelectWaypoint}
         />
       ))}
     </MapContainer>

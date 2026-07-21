@@ -5,6 +5,9 @@ export function locationToPoint(location) {
     longitude: location.longitude,
     accuracy: location.accuracy,
     timestamp: Date.now(),
+    type: "mark",
+    title: "",
+    description: "",
   };
 }
 

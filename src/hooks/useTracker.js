@@ -17,32 +17,70 @@ export default function useTracker(location) {
     return locationToPoint(location);
   }
 
+  // Create waypoint
+  function createWaypoint(type, extra = {}) {
+    const point = getCurrentPoint();
+
+    if (!point) return null;
+
+    return {
+      ...point,
+      type,
+      ...extra,
+    };
+  }
+
   // Initialize recording
   function startRecording() {
     setRoute([]);
     setWaypoints([]);
 
-    const point = getCurrentPoint();
+    const startPoint = createWaypoint("start");
 
-    if (point) {
-      setRoute([point]);
-    }
+    if (!startPoint) return;
 
+    setRoute([startPoint]);
+    setWaypoints([startPoint]);
     setIsRecording(true);
   }
 
   // Add way points
   function addWaypoint() {
-    if (!isRecording) return;
+    if (!isRecording) return null;
 
-    const point = getCurrentPoint();
-    if (!point) return;
+    const point = createWaypoint("mark", {
+      title: "",
+      description: "",
+    });
 
-    setWaypoints((previous) => [...previous, locationToPoint(location)]);
+    if (!point) return null;
+
+    setWaypoints((prev) => [...prev, point]);
+
+    return point.id;
+  }
+
+  // Update a waypoint
+  function updateWaypoint(id, updates) {
+    setWaypoints((previous) =>
+      previous.map((point) =>
+        point.id === id
+          ? { ...point, ...updates }
+          : point,
+      ),
+    );
   }
 
   // Stop recording
   function stopRecording() {
+    if (!isRecording) return;
+
+    const point = createWaypoint("end");
+
+    if (point) {
+      setWaypoints((prev) => [...prev, point]);
+    }
+
     setIsRecording(false);
   }
 
@@ -76,7 +114,6 @@ export default function useTracker(location) {
     });
   }, [location, isRecording]);
 
-  // Add way points
   return {
     route,
     waypoints,
@@ -84,6 +121,7 @@ export default function useTracker(location) {
     startRecording,
     stopRecording,
     addWaypoint,
+    updateWaypoint,
     clearRoute,
   };
 }

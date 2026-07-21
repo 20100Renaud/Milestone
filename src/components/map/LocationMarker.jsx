@@ -19,7 +19,8 @@ function LocationMarker({ location }) {
   return (
     <Marker position={[location.latitude, location.longitude]}>
       <Popup>
-        You are here
+        <h3>{point.title || "Untitled mark"}</h3>
+        <p>{point.description}</p>
         <br />
         Accuracy: {Math.round(location.accuracy)}m
       </Popup>

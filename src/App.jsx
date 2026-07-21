@@ -1,20 +1,35 @@
+import { useState } from "react";
 import Header from "./components/layout/Header";
 import MapView from "./components/map/MapView";
 import StatsPanel from "./components/stats/StatsPanel";
 import Controls from "./components/controls/Controls";
 import useLocation from "./hooks/useLocation";
 import useTracker from "./hooks/useTracker";
+import WaypointEditor from "./components/waypoints/WaypointEditor";
 
 function App() {
   const { location, error } = useLocation();
+  const [selectedWaypointId, setSelectedWaypointId] = useState(null);
   const {
     route,
     waypoints,
     isRecording,
     startRecording,
     stopRecording,
-    addWaypoint,
+    updateWaypoint,
   } = useTracker(location);
+
+  const selectedWaypoint =
+    waypoints.find((point) => point.id === selectedWaypointId) ?? null;
+
+  // Mark id
+  function handleMark() {
+    const id = addWaypoint();
+
+    if (id) {
+      setSelectedWaypointId(id);
+    }
+  }
 
   return (
     <div className="flex flex-col h-screen bg-black ">
@@ -25,6 +40,8 @@ function App() {
           location={location}
           route={route}
           waypoints={waypoints}
+          selectedWaypoint={selectedWaypoint}
+          onSelectWaypoint={setSelectedWaypointId}
         />
       </main>
 
@@ -35,11 +52,17 @@ function App() {
         waypoints={waypoints}
       />
 
+      <WaypointEditor
+        waypoint={selectedWaypoint}
+        onSave={updateWaypoint}
+        onClose={() => setSelectedWaypointId(null)}
+      />
+
       <Controls
         isRecording={isRecording}
         onStart={startRecording}
         onStop={stopRecording}
-        onMark={addWaypoint}
+        onMark={handleMark}
       />
     </div>
   );
