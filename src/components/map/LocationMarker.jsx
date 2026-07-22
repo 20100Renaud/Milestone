@@ -1,6 +1,7 @@
 import { Marker, Popup } from "react-leaflet";
 import { useMap } from "react-leaflet";
 import { useEffect } from "react";
+import { locationIcon } from "./icons";
 
 function LocationMarker({ location, follow }) {
   const map = useMap();
@@ -18,7 +19,10 @@ function LocationMarker({ location, follow }) {
   }
 
   return (
-    <Marker position={[location.latitude, location.longitude]}>
+    <Marker
+      position={[location.latitude, location.longitude]}
+      icon={locationIcon}
+    >
       <Popup>
         <strong>You are here</strong>
         <br />

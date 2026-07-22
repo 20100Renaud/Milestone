@@ -6,8 +6,13 @@ import Controls from "./components/controls/Controls";
 import useLocation from "./hooks/useLocation";
 import useTracker from "./hooks/useTracker";
 import WaypointEditor from "./components/waypoints/WaypointEditor";
-import { saveJourney, loadJourneys } from "./services/storage";
 import JourneyList from "./components/journeys/JourneyList";
+import {
+  saveJourney,
+  loadJourneys,
+  deleteJourney,
+  clearJourneys,
+} from "./services/storage";
 
 function App() {
   const { location, error } = useLocation();
@@ -24,12 +29,12 @@ function App() {
 
   const [selectedWaypointId, setSelectedWaypointId] = useState(null);
   const [selectedJourney, setSelectedJourney] = useState(null);
+  const [onDeleteJourney, setOnDeleteJourney] = useState(null);
   const [journeys, setJourneys] = useState(loadJourneys);
   const [historyOpen, setHistoryOpen] = useState(false);
 
   const selectedWaypoint =
     waypoints.find((point) => point.id === selectedWaypointId) ?? null;
-
 
   // Mark id
   function handleMark() {
@@ -53,6 +58,28 @@ function App() {
     saveJourney(journey);
     setJourneys(loadJourneys());
   }, [journey]);
+
+  // Delete a journey
+  function handleDeleteJourney(id) {
+    deleteJourney(id);
+
+    const updated = loadJourneys();
+    setJourneys(updated);
+
+    if (selectedJourney?.id === id) {
+      setSelectedJourney(null);
+    }
+  }
+
+  // Delete all journeys
+  function handleClearJourneys() {
+    if (!window.confirm("Delete all saved journeys?")) return;
+
+    clearJourneys();
+
+    setJourneys([]);
+    setSelectedJourney(null);
+  }
 
   return (
     <div className="flex flex-col h-screen bg-black ">
@@ -88,6 +115,8 @@ function App() {
         open={historyOpen}
         onToggle={() => setHistoryOpen((open) => !open)}
         onSelectJourney={setSelectedJourney}
+        onDeleteJourney={handleDeleteJourney}
+        onClearJourneys={handleClearJourneys}
       />
 
       <Controls

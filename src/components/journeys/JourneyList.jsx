@@ -1,4 +1,11 @@
-function JourneyList({ journeys, open, onToggle, onSelectJourney }) {
+function JourneyList({
+  journeys,
+  open,
+  onToggle,
+  onSelectJourney,
+  onDeleteJourney,
+  onClearJourneys,
+}) {
   return (
     <div className="bg-slate-900 text-white">
       <button
@@ -11,8 +18,15 @@ function JourneyList({ journeys, open, onToggle, onSelectJourney }) {
       </button>
 
       {open && (
-        <div className="max-h-56 overflow-y-auto border-t border-slate-700 p-4">
-          <h2 className="mb-2 text-lg font-bold">Saved journeys</h2>
+        <div className="flex justify-between items-center max-h-56  overflow-y-auto border-t border-slate-700 p-4">
+          <h2 className="text-lg font-bold">Saved journeys</h2>
+
+          <button
+            onClick={onClearJourneys}
+            className="rounded bg-red-800 px-3 py-1 text-sm"
+          >
+            🗑 Clear history
+          </button>
 
           {journeys.length === 0 ? (
             <p>No saved journeys.</p>
@@ -27,6 +41,15 @@ function JourneyList({ journeys, open, onToggle, onSelectJourney }) {
                   }}
                   className="rounded bg-slate-800 p-3"
                 >
+                  <button
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onDeleteJourney(journey.id);
+                    }}
+                    className="rounded bg-red-700 px-2 py-1 text-sm"
+                  >
+                    🗑 Delete this journey
+                  </button>
                   <p className="font-semibold">
                     {new Date(journey.startedAt).toLocaleString()}
                   </p>

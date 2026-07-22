@@ -25,7 +25,14 @@ export function saveJourney(journey) {
   console.log("Stored journeys:", localStorage.getItem(STORAGE_KEY));
 }
 
-// DELETE
+// DELETE ALL JOURNEYS
 export function clearJourneys() {
   localStorage.removeItem(STORAGE_KEY);
+}
+
+// DELETE ONE JOURNEY
+export function deleteJourney(id) {
+  const journeys = loadJourneys().filter((journey) => journey.id !== id);
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(journeys));
 }
