@@ -2,17 +2,16 @@ import { Marker, Popup } from "react-leaflet";
 import { useMap } from "react-leaflet";
 import { useEffect } from "react";
 
-function LocationMarker({ location }) {
-  // add follow={ !selectedJourney } if on an old journey, the map jump back to the current location
-
-  // Update location on each gps new response
+function LocationMarker({ location, follow }) {
   const map = useMap();
 
+  // Update location on each gps income if location and follow are true
   useEffect(() => {
-    if (location) {
-      map.setView([location.latitude, location.longitude], 16);
-    }
-  }, [location, map]);
+    if (!follow) return;
+    if (!location) return;
+
+    map.setView([location.latitude, location.longitude], 16);
+  }, [location, follow, map]);
 
   if (!location) {
     return null;

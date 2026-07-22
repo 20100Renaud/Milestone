@@ -2,6 +2,7 @@ import { MapContainer, TileLayer, Polyline } from "react-leaflet";
 import WaypointMarker from "./WaypointMarker";
 import LocationMarker from "./LocationMarker";
 import { startIcon, markIcon, endIcon } from "../../components/map/icons";
+import MapBounds from "./MapBounds";
 
 
 // Associate icons with types
@@ -24,6 +25,7 @@ function MapView({
   route,
   waypoints,
   isRecording,
+  selectedJourney,
   selectedWaypoint,
   onSelectWaypoint,
 }) {
@@ -38,7 +40,9 @@ function MapView({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      {!isRecording && <LocationMarker location={location} />}
+      {!isRecording && (
+        <LocationMarker location={location} follow={!selectedJourney} />
+      )}
 
       <Polyline
         positions={(route ?? []).map((point) => [
@@ -50,6 +54,8 @@ function MapView({
           weight: 5,
         }}
       />
+
+      <MapBounds route={route} />
 
       {waypoints.map((point) => (
         <WaypointMarker

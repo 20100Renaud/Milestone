@@ -1,39 +1,54 @@
-function JourneyList({ onSelectJourney, journeys }) {
-  if (journeys.length === 0) {
-    return (
-      <div className="bg-slate-900 p-4 text-white">
-        <p>No saved journeys.</p>
-      </div>
-    );
-  }
-
+function JourneyList({ journeys, open, onToggle, onSelectJourney }) {
   return (
-    <div className="space-y-2 bg-slate-900 p-4 text-white">
-      <h2 className="text-lg font-bold">Saved journeys</h2>
+    <div className="bg-slate-900 text-white">
+      <button
+        onClick={onToggle}
+        className="flex w-full items-center justify-between p-4"
+      >
+        <span className="font-bold">History ({journeys.length})</span>
 
-      {journeys.map((journey) => (
-        <div
-          key={journey.id}
-          onClick={() => onSelectJourney(journey)}
-          className="rounded bg-slate-800 p-3"
-        >
-          <p className="font-semibold">
-            {new Date(journey.startedAt).toLocaleString()}
-          </p>
+        <span>{open ? "▲" : "▼"}</span>
+      </button>
 
-          <div className="mt-2 text-sm text-slate-300">
-            <p>Route points: {journey.route.length}</p>
+      {open && (
+        <div className="max-h-56 overflow-y-auto border-t border-slate-700 p-4">
+          <h2 className="mb-2 text-lg font-bold">Saved journeys</h2>
 
-            <p>
-              Waypoints:{" "}
-              {
-                journey.waypoints.filter((point) => point.type === "mark")
-                  .length
-              }
-            </p>
-          </div>
+          {journeys.length === 0 ? (
+            <p>No saved journeys.</p>
+          ) : (
+            <div className="space-y-2">
+              {journeys.map((journey) => (
+                <div
+                  key={journey.id}
+                  onClick={() => {
+                    onSelectJourney(journey);
+                    onToggle();
+                  }}
+                  className="rounded bg-slate-800 p-3"
+                >
+                  <p className="font-semibold">
+                    {new Date(journey.startedAt).toLocaleString()}
+                  </p>
+
+                  <div className="mt-2 text-sm text-slate-300">
+                    <p>Route points: {journey.route.length}</p>
+
+                    <p>
+                      Waypoints:{" "}
+                      {
+                        journey.waypoints.filter(
+                          (point) => point.type === "mark",
+                        ).length
+                      }
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      ))}
+      )}
     </div>
   );
 }

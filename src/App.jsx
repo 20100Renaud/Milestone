@@ -25,6 +25,7 @@ function App() {
   const [selectedWaypointId, setSelectedWaypointId] = useState(null);
   const [selectedJourney, setSelectedJourney] = useState(null);
   const [journeys, setJourneys] = useState(loadJourneys);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   const selectedWaypoint =
     waypoints.find((point) => point.id === selectedWaypointId) ?? null;
@@ -63,6 +64,7 @@ function App() {
           route={selectedJourney?.route ?? route}
           waypoints={selectedJourney?.waypoints ?? waypoints}
           isRecording={isRecording}
+          selectedJourney={selectedJourney}
           selectedWaypoint={selectedWaypoint}
           onSelectWaypoint={setSelectedWaypointId}
         />
@@ -81,7 +83,12 @@ function App() {
         onClose={() => setSelectedWaypointId(null)}
       />
 
-      <JourneyList journeys={journeys} onSelectJourney={setSelectedJourney} />
+      <JourneyList
+        journeys={journeys}
+        open={historyOpen}
+        onToggle={() => setHistoryOpen((open) => !open)}
+        onSelectJourney={setSelectedJourney}
+      />
 
       <Controls
         isRecording={isRecording}
