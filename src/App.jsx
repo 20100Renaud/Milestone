@@ -12,6 +12,7 @@ import {
   loadJourneys,
   deleteJourney,
   clearJourneys,
+  updateJourneyWaypoint,
 } from "./services/storage";
 
 function App() {
@@ -53,16 +54,37 @@ function App() {
   // Manage start
   function handleStart() {
     setSelectedJourney(null);
+    setSelectedWaypointId(null);
     startRecording();
   }
 
-  // Save journey
+  // Save a journey
   useEffect(() => {
     if (!journey) return;
 
     saveJourney(journey);
     setJourneys(loadJourneys());
   }, [journey]);
+
+  // Update one waypoint inside a journey
+  function handleUpdateWaypoint(id, updates) {
+    if (selectedJourney) {
+      updateJourneyWaypoint(selectedJourney.id, id, updates);
+
+      const updated = loadJourneys();
+      setJourneys(updated);
+
+      const refreshedJourney = updated.find(
+        (journey) => journey.id === selectedJourney.id,
+      );
+
+      setSelectedJourney(refreshedJourney);
+
+      return;
+    }
+
+    updateWaypoint(id, updates);
+  }
 
   // Delete a journey
   function handleDeleteJourney(id) {
@@ -108,10 +130,14 @@ function App() {
         waypoints={selectedJourney?.waypoints ?? waypoints}
       />
 
-      {!selectedJourney && markerCount > 0 && (
+      {markerCount > 0 && (
         <WaypointEditor
-          waypoint={selectedWaypoint}
-          onSave={updateWaypoint}
+          waypoints={displayedWaypoints.filter(
+            (point) => point.type === "mark",
+          )}
+          selectedWaypoint={selectedWaypoint}
+          onSelectWaypoint={setSelectedWaypointId}
+          onSave={handleUpdateWaypoint}
           onClose={() => setSelectedWaypointId(null)}
         />
       )}

@@ -11,7 +11,7 @@ export function loadJourneys() {
   }
 }
 
-// Save JOURNEY
+// SAVE THE JOURNEY
 export function saveJourney(journey) {
   const journeys = loadJourneys();
   const exists = journeys.some((j) => j.id === journey.id);
@@ -25,7 +25,7 @@ export function saveJourney(journey) {
   console.log("Stored journeys:", localStorage.getItem(STORAGE_KEY));
 }
 
-// UPDATE JOURNEY
+// UPDATE A JOURNEY
 export function updateJourney(id, updates) {
   const journeys = loadJourneys().map((journey) =>
     journey.id === id ? { ...journey, ...updates } : journey,
@@ -34,6 +34,30 @@ export function updateJourney(id, updates) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(journeys));
 }
 
+// UPDATE ONE WAYPOINT INSIDE A JOURNEY
+export function updateJourneyWaypoint(journeyId, waypointId, updates) {
+  const journeys = loadJourneys();
+
+  const updatedJourneys = journeys.map((journey) => {
+    if (journey.id !== journeyId) {
+      return journey;
+    }
+
+    return {
+      ...journey,
+      waypoints: journey.waypoints.map((point) =>
+        point.id === waypointId
+          ? { ...point, ...updates }
+          : point,
+      ),
+    };
+  });
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(updatedJourneys),
+  );
+}
 // DELETE ALL JOURNEYS
 export function clearJourneys() {
   localStorage.removeItem(STORAGE_KEY);

@@ -1,79 +1,117 @@
 import { useEffect, useState } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  ChevronUp,
+  Pencil,
+} from "lucide-react";
 
-function WaypointEditor({ waypoint, onSave, onClose }) {
+function WaypointEditor({
+  waypoints,
+  selectedWaypoint,
+  onSelectWaypoint,
+  onSave,
+}) {
+  const [expanded, setExpanded] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  // Initialize waypoint
+  const currentIndex = waypoints.findIndex(
+    (point) => point.id === selectedWaypoint?.id,
+  );
+
   useEffect(() => {
-    if (!waypoint) {
-      setTitle("");
-      setDescription("");
-      return;
-    }
+    if (!selectedWaypoint) return;
 
-    setTitle(waypoint.title ?? "");
-    setDescription(waypoint.description ?? "");
-  }, [waypoint]);
+    setTitle(selectedWaypoint.title ?? "");
+    setDescription(selectedWaypoint.description ?? "");
+  }, [selectedWaypoint]);
 
-  if (!waypoint) {
-    return (
-      <div className="bg-slate-900 p-4 text-white">
-        <p>Select a marker to edit it.</p>
-      </div>
-    );
+  if (!selectedWaypoint) {
+    return null;
   }
 
-  // Save
+  function selectPrevious() {
+    const newIndex =
+      currentIndex <= 0 ? waypoints.length - 1 : currentIndex - 1;
+
+    onSelectWaypoint(waypoints[newIndex].id);
+  }
+
+  function selectNext() {
+    const newIndex =
+      currentIndex >= waypoints.length - 1 ? 0 : currentIndex + 1;
+
+    onSelectWaypoint(waypoints[newIndex].id);
+  }
+
   function handleSave() {
-    onSave(waypoint.id, {
+    onSave(selectedWaypoint.id, {
       title: title.trim(),
       description: description.trim(),
     });
-
-    onClose();
   }
 
   return (
-    <div className="space-y-3 bg-slate-900 p-4 text-white">
-      <h2 className="text-lg font-semibold">Edit waypoint</h2>
-
-      <div>
-        <label className="mb-1 block text-sm">Title</label>
-
-        <input
-          type="text"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          placeholder="Waypoint title"
-          className="w-full rounded border border-slate-600 bg-slate-800 p-2 text-white"
-        />
-      </div>
-
-      <div>
-        <label className="mb-1 block text-sm">Description</label>
-
-        <textarea
-          rows={4}
-          value={description}
-          onChange={(event) => setDescription(event.target.value)}
-          placeholder="Description..."
-          className="w-full rounded border border-slate-600 bg-slate-800 p-2 text-white"
-        />
-      </div>
-
-      <div className="flex justify-around">
-        <button
-          onClick={handleSave}
-          className="rounded bg-blue-600 px-4 py-2 text-white"
-        >
-          Save
+    <div className="bg-slate-900 text-white border-t border-slate-700">
+      {/* collapsed bar */}
+      <div className="flex items-center justify-between px-3 py-2">
+        <button onClick={selectPrevious}>
+          <ChevronLeft />
         </button>
 
-        <button onClick={onClose} className="rounded bg-slate-600 px-4 py-2">
-          Close
+        <div className="flex-1 text-center">
+          <div className="text-sm text-slate-400">
+            Waypoint {currentIndex + 1}/{waypoints.length}
+          </div>
+
+          <div className="font-semibold">
+            {selectedWaypoint.title || "Untitled waypoint"}
+          </div>
+        </div>
+
+        <button onClick={selectNext}>
+          <ChevronRight />
+        </button>
+
+        <button onClick={() => setExpanded(!expanded)} className="ml-3">
+          {expanded ? <ChevronUp /> : <ChevronDown />}
         </button>
       </div>
+
+      {expanded && (
+        <div className="space-y-3 border-t border-slate-700 p-4">
+          <div>
+            <label className="text-sm">Title</label>
+
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full rounded bg-slate-800 p-2"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm">Description</label>
+
+            <textarea
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full rounded bg-slate-800 p-2"
+            />
+          </div>
+
+          <button
+            onClick={handleSave}
+            className="flex items-center gap-2 rounded bg-blue-600 px-4 py-2"
+          >
+            <Pencil size={16} />
+            Save
+          </button>
+        </div>
+      )}
     </div>
   );
 }
