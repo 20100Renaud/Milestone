@@ -5,7 +5,6 @@ import {
   Calendar,
   Route,
   MapPin,
-  Waypoints,
 } from "lucide-react";
 
 function JourneyList({
@@ -24,7 +23,7 @@ function JourneyList({
       <div className="flex items-center justify-between border-b border-slate-700 px-4 py-3">
         <button
           onClick={onToggle}
-          className="flex items-center gap-2 font-semibold"
+          className="flex flex-1 items-center gap-2 font-semiboldr"
         >
           {open ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
           History ({journeys.length})
@@ -60,7 +59,7 @@ function JourneyList({
                       onSelectJourney(journey);
                       onToggle();
                     }}
-                    className="cursor-pointer rounded-lg border border-slate-700 bg-slate-800 p-3 transition"
+                    className="rounded-lg border border-slate-700 bg-slate-800 p-3 transition"
                   >
                     <div className="flex items-start justify-between">
                       <div className="space-y-2">
@@ -77,7 +76,9 @@ function JourneyList({
                         <div className="flex flex-wrap gap-4 text-sm text-slate-300">
                           <div className="flex items-center gap-1">
                             <Route size={16} />
-                            {(journey.distance / 1000).toFixed(2)} km
+                            {journey.distance >= 1000
+                              ? `${(journey.distance / 1000).toFixed(2)} km`
+                              : `${journey.distance.toFixed(1)} m`}
                           </div>
 
                           <div className="flex items-center gap-1">
@@ -87,11 +88,6 @@ function JourneyList({
                                 (point) => point.type === "mark",
                               ).length
                             }
-                          </div>
-
-                          <div className="flex items-center gap-1">
-                            <Waypoints size={16} />
-                            {journey.route.length}
                           </div>
                         </div>
                       </div>

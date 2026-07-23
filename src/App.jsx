@@ -58,6 +58,15 @@ function App() {
     startRecording();
   }
 
+  // Select a journey
+  function handleSelectJourney(journey) {
+    setSelectedJourney(journey);
+
+    const firstMark = journey.waypoints.find((point) => point.type === "mark");
+
+    setSelectedWaypointId(firstMark?.id ?? null);
+  }
+
   // Save a journey
   useEffect(() => {
     if (!journey) return;
@@ -130,7 +139,14 @@ function App() {
         waypoints={selectedJourney?.waypoints ?? waypoints}
       />
 
-      {markerCount > 0 && (
+      <Controls
+        isRecording={isRecording}
+        onStart={handleStart}
+        onStop={stopRecording}
+        onMark={handleMark}
+      />
+
+      {selectedWaypoint && (
         <WaypointEditor
           waypoints={displayedWaypoints.filter(
             (point) => point.type === "mark",
@@ -142,21 +158,16 @@ function App() {
         />
       )}
 
-      <JourneyList
-        journeys={journeys}
-        open={historyOpen}
-        onToggle={() => setHistoryOpen((open) => !open)}
-        onSelectJourney={setSelectedJourney}
-        onDeleteJourney={handleDeleteJourney}
-        onClearJourneys={handleClearJourneys}
-      />
-
-      <Controls
-        isRecording={isRecording}
-        onStart={handleStart}
-        onStop={stopRecording}
-        onMark={handleMark}
-      />
+      {!isRecording && (
+        <JourneyList
+          journeys={journeys}
+          open={historyOpen}
+          onToggle={() => setHistoryOpen((open) => !open)}
+          onSelectJourney={handleSelectJourney}
+          onDeleteJourney={handleDeleteJourney}
+          onClearJourneys={handleClearJourneys}
+        />
+      )}
     </div>
   );
 }

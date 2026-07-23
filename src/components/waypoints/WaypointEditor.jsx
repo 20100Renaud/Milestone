@@ -32,6 +32,7 @@ function WaypointEditor({
     return null;
   }
 
+  // Previous point
   function selectPrevious() {
     const newIndex =
       currentIndex <= 0 ? waypoints.length - 1 : currentIndex - 1;
@@ -39,6 +40,7 @@ function WaypointEditor({
     onSelectWaypoint(waypoints[newIndex].id);
   }
 
+  // Next point
   function selectNext() {
     const newIndex =
       currentIndex >= waypoints.length - 1 ? 0 : currentIndex + 1;
@@ -46,28 +48,30 @@ function WaypointEditor({
     onSelectWaypoint(waypoints[newIndex].id);
   }
 
+  // Save point
   function handleSave() {
     onSave(selectedWaypoint.id, {
       title: title.trim(),
       description: description.trim(),
     });
+    setExpanded(false);
   }
 
   return (
     <div className="bg-slate-900 text-white border-t border-slate-700">
       {/* collapsed bar */}
-      <div className="flex items-center justify-between px-3 py-2">
+      <div className="flex items-center gap-3 px-3 py-2">
         <button onClick={selectPrevious}>
           <ChevronLeft />
         </button>
 
         <div className="flex-1 text-center">
-          <div className="text-sm text-slate-400">
-            Waypoint {currentIndex + 1}/{waypoints.length}
+          <div className="font-semibold">
+            {selectedWaypoint.title || "Untitled"}
           </div>
 
-          <div className="font-semibold">
-            {selectedWaypoint.title || "Untitled waypoint"}
+          <div className="text-xs text-slate-400">
+            {currentIndex + 1} / {waypoints.length}
           </div>
         </div>
 
@@ -75,7 +79,7 @@ function WaypointEditor({
           <ChevronRight />
         </button>
 
-        <button onClick={() => setExpanded(!expanded)} className="ml-3">
+        <button onClick={() => setExpanded(!expanded)} className="ml-2">
           {expanded ? <ChevronUp /> : <ChevronDown />}
         </button>
       </div>
@@ -105,7 +109,7 @@ function WaypointEditor({
 
           <button
             onClick={handleSave}
-            className="flex items-center gap-2 rounded bg-blue-600 px-4 py-2"
+            className="flex justify-end items-center gap-2 rounded bg-blue-600 px-4 py-2"
           >
             <Pencil size={16} />
             Save

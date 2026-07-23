@@ -3,6 +3,7 @@ import WaypointMarker from "./WaypointMarker";
 import LocationMarker from "./LocationMarker";
 import { startIcon, markIcon, endIcon } from "../../components/map/icons";
 import MapBounds from "./MapBounds";
+import SelectedWaypointFollower from "./SelectedWaypointFollower";
 
 
 // Associate icons with types
@@ -66,6 +67,8 @@ function MapView({
           onSelect={onSelectWaypoint}
         />
       ))}
+
+      <SelectedWaypointFollower waypoint={selectedWaypoint} />
     </MapContainer>
   );
 }
