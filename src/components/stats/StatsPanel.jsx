@@ -1,4 +1,8 @@
+import { calculateRouteDistance } from "../../utils/distance";
+
 function StatsPanel({ location, error, route, waypoints }) {
+  const distance = calculateRouteDistance(route);
+
   if (!location) {
     return (
       <div className="bg-slate-100 p-4">
@@ -27,8 +31,14 @@ function StatsPanel({ location, error, route, waypoints }) {
       </p>
 
       <div className="flex gap-2">
-        <p>Recorded points: {route.length}</p>
-        <p>Waypoints: {waypoints.length}</p>
+        <p>GPS points: {route.length}</p>
+        <p>Saved points: {waypoints.length}</p>
+        <p>
+          Distance:{" "}
+          {distance >= 1000
+            ? `${(distance / 1000).toFixed(2)} km`
+            : `${distance.toFixed(1)} m`}
+        </p>
       </div>
     </div>
   );

@@ -36,6 +36,11 @@ function App() {
   const selectedWaypoint =
     waypoints.find((point) => point.id === selectedWaypointId) ?? null;
 
+  const displayedWaypoints = selectedJourney?.waypoints ?? waypoints;
+  const markerCount = displayedWaypoints.filter(
+    (point) => point.type === "mark",
+  ).length;
+
   // Mark id
   function handleMark() {
     const id = addWaypoint();
@@ -76,13 +81,12 @@ function App() {
     if (!window.confirm("Delete all saved journeys?")) return;
 
     clearJourneys();
-
     setJourneys([]);
     setSelectedJourney(null);
   }
 
   return (
-    <div className="flex flex-col h-screen bg-black ">
+    <div className="flex flex-col h-screen">
       <Header />
 
       <main className="flex-1 overflow-hidden">
@@ -104,11 +108,13 @@ function App() {
         waypoints={selectedJourney?.waypoints ?? waypoints}
       />
 
-      <WaypointEditor
-        waypoint={selectedWaypoint}
-        onSave={updateWaypoint}
-        onClose={() => setSelectedWaypointId(null)}
-      />
+      {!selectedJourney && markerCount > 0 && (
+        <WaypointEditor
+          waypoint={selectedWaypoint}
+          onSave={updateWaypoint}
+          onClose={() => setSelectedWaypointId(null)}
+        />
+      )}
 
       <JourneyList
         journeys={journeys}

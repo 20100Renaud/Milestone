@@ -11,7 +11,7 @@ export function loadJourneys() {
   }
 }
 
-// PUT
+// Save JOURNEY
 export function saveJourney(journey) {
   const journeys = loadJourneys();
   const exists = journeys.some((j) => j.id === journey.id);
@@ -23,6 +23,15 @@ export function saveJourney(journey) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(journeys));
 
   console.log("Stored journeys:", localStorage.getItem(STORAGE_KEY));
+}
+
+// UPDATE JOURNEY
+export function updateJourney(id, updates) {
+  const journeys = loadJourneys().map((journey) =>
+    journey.id === id ? { ...journey, ...updates } : journey,
+  );
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(journeys));
 }
 
 // DELETE ALL JOURNEYS

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { locationToPoint, distanceBetween } from "../utils/geo";
+import { calculateRouteDistance } from "../utils/distance";
 
 export default function useTracker(location) {
   const [route, setRoute] = useState([]);
@@ -80,10 +81,12 @@ export default function useTracker(location) {
 
     const completedJourney = {
       id: crypto.randomUUID(),
+      title: new Date().toLocaleString(),
       startedAt: route[0]?.timestamp ?? Date.now(),
       endedAt: Date.now(),
       route,
       waypoints: completedWaypoints,
+      distance: calculateRouteDistance(route),
     };
 
     setWaypoints(completedWaypoints);

@@ -24,17 +24,6 @@ function WaypointEditor({ waypoint, onSave, onClose }) {
     );
   }
 
-  if (waypoint.type !== "mark") {
-    return (
-      <div className="bg-slate-900 p-4 text-white">
-        <p>
-          <strong>{waypoint.type.toUpperCase()}</strong>
-        </p>
-        <p>This marker cannot be edited.</p>
-      </div>
-    );
-  }
-
   // Save
   function handleSave() {
     onSave(waypoint.id, {
@@ -76,7 +65,7 @@ function WaypointEditor({ waypoint, onSave, onClose }) {
       <div className="flex justify-around">
         <button
           onClick={handleSave}
-          className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          className="rounded bg-blue-600 px-4 py-2 text-white"
         >
           Save
         </button>

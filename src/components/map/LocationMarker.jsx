@@ -11,7 +11,7 @@ function LocationMarker({ location, follow }) {
     if (!follow) return;
     if (!location) return;
 
-    map.setView([location.latitude, location.longitude], 16);
+    map.panTo([location.latitude, location.longitude]);
   }, [location, follow, map]);
 
   if (!location) {
