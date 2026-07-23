@@ -50,14 +50,22 @@ export default function useTracker(location) {
   function addWaypoint() {
     if (!isRecording) return null;
 
-    const point = createWaypoint("mark", {
-      title: "",
-      description: "",
-    });
+    const point = createWaypoint("mark");
 
     if (!point) return null;
 
-    setWaypoints((prev) => [...prev, point]);
+    setWaypoints((previous) => {
+      const markNumber = previous.filter((p) => p.type === "mark").length + 1;
+
+      return [
+        ...previous,
+        {
+          ...point,
+          title: `Mark #${markNumber}`,
+          description: "",
+        },
+      ];
+    });
 
     return point.id;
   }
@@ -81,7 +89,8 @@ export default function useTracker(location) {
 
     const completedJourney = {
       id: crypto.randomUUID(),
-      title: new Date().toLocaleString(),
+      title: "",
+      description: "",
       startedAt: route[0]?.timestamp ?? Date.now(),
       endedAt: Date.now(),
       route,

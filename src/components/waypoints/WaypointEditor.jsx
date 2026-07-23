@@ -11,9 +11,10 @@ function WaypointEditor({
   waypoints,
   selectedWaypoint,
   onSelectWaypoint,
+  expanded,
+  onToggle,
   onSave,
 }) {
-  const [expanded, setExpanded] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -54,7 +55,6 @@ function WaypointEditor({
       title: title.trim(),
       description: description.trim(),
     });
-    setExpanded(false);
   }
 
   return (
@@ -79,7 +79,7 @@ function WaypointEditor({
           <ChevronRight />
         </button>
 
-        <button onClick={() => setExpanded(!expanded)} className="ml-2">
+        <button onClick={onToggle} className="ml-2">
           {expanded ? <ChevronUp /> : <ChevronDown />}
         </button>
       </div>

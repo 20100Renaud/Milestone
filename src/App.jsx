@@ -6,6 +6,7 @@ import Controls from "./components/controls/Controls";
 import useLocation from "./hooks/useLocation";
 import useTracker from "./hooks/useTracker";
 import WaypointEditor from "./components/waypoints/WaypointEditor";
+import JourneyDialog from "./components/journeys/JourneyDialog";
 import JourneyList from "./components/journeys/JourneyList";
 import {
   saveJourney,
@@ -30,14 +31,15 @@ function App() {
 
   const [selectedWaypointId, setSelectedWaypointId] = useState(null);
   const [selectedJourney, setSelectedJourney] = useState(null);
-  const [onDeleteJourney, setOnDeleteJourney] = useState(null);
   const [journeys, setJourneys] = useState(loadJourneys);
-  const [historyOpen, setHistoryOpen] = useState(false);
+  const [pendingJourney, setPendingJourney] = useState(null);
 
-  const selectedWaypoint =
-    waypoints.find((point) => point.id === selectedWaypointId) ?? null;
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [editorExpanded, setEditorExpanded] = useState(false);
 
   const displayedWaypoints = selectedJourney?.waypoints ?? waypoints;
+  const selectedWaypoint =
+    displayedWaypoints.find((point) => point.id === selectedWaypointId) ?? null;
   const markerCount = displayedWaypoints.filter(
     (point) => point.type === "mark",
   ).length;
@@ -46,9 +48,10 @@ function App() {
   function handleMark() {
     const id = addWaypoint();
 
-    if (id) {
-      setSelectedWaypointId(id);
-    }
+    if (!id) return;
+
+    setSelectedWaypointId(id);
+    setEditorExpanded(true);
   }
 
   // Manage start
@@ -62,18 +65,44 @@ function App() {
   function handleSelectJourney(journey) {
     setSelectedJourney(journey);
 
-    const firstMark = journey.waypoints.find((point) => point.type === "mark");
+    const firstMark = journey.waypoints.find((p) => p.type === "mark");
 
     setSelectedWaypointId(firstMark?.id ?? null);
+    setEditorExpanded(false);
+  }
+
+  // Select a waypoint
+  function handleSelectWaypoint(id) {
+    setSelectedWaypointId(id);
+
+    if (selectedJourney) {
+      setEditorExpanded(true);
+    }
   }
 
   // Save a journey
   useEffect(() => {
     if (!journey) return;
 
-    saveJourney(journey);
-    setJourneys(loadJourneys());
+    setPendingJourney(journey);
   }, [journey]);
+
+  function handleSaveJourney(title, description) {
+    saveJourney({
+      ...pendingJourney,
+      title,
+      description,
+    });
+
+    setJourneys(loadJourneys());
+
+    setPendingJourney(null);
+  }
+
+  // Manage editor visibility
+  const editorVisible =
+    selectedWaypoint != null &&
+    (selectedJourney != null || (isRecording && editorExpanded));
 
   // Update one waypoint inside a journey
   function handleUpdateWaypoint(id, updates) {
@@ -88,11 +117,17 @@ function App() {
       );
 
       setSelectedJourney(refreshedJourney);
+      setEditorExpanded(false);
 
       return;
     }
 
     updateWaypoint(id, updates);
+    setEditorExpanded(false);
+
+    if (!selectedJourney) {
+      setSelectedWaypointId(null);
+    }
   }
 
   // Delete a journey
@@ -128,7 +163,7 @@ function App() {
           isRecording={isRecording}
           selectedJourney={selectedJourney}
           selectedWaypoint={selectedWaypoint}
-          onSelectWaypoint={setSelectedWaypointId}
+          onSelectWaypoint={handleSelectWaypoint}
         />
       </main>
 
@@ -139,24 +174,34 @@ function App() {
         waypoints={selectedJourney?.waypoints ?? waypoints}
       />
 
-      <Controls
-        isRecording={isRecording}
-        onStart={handleStart}
-        onStop={stopRecording}
-        onMark={handleMark}
-      />
+      {!editorVisible && (
+        <Controls
+          isRecording={isRecording}
+          onStart={handleStart}
+          onStop={stopRecording}
+          onMark={handleMark}
+        />
+      )}
 
-      {selectedWaypoint && (
+      {editorVisible && (
         <WaypointEditor
           waypoints={displayedWaypoints.filter(
             (point) => point.type === "mark",
           )}
           selectedWaypoint={selectedWaypoint}
+          expanded={editorExpanded}
+          onToggle={() => setEditorExpanded((v) => !v)}
           onSelectWaypoint={setSelectedWaypointId}
           onSave={handleUpdateWaypoint}
-          onClose={() => setSelectedWaypointId(null)}
         />
       )}
+
+      <JourneyDialog
+        key={pendingJourney?.id}
+        journey={pendingJourney}
+        onSave={handleSaveJourney}
+        onCancel={() => setPendingJourney(null)}
+      />
 
       {!isRecording && (
         <JourneyList
