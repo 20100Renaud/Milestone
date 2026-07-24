@@ -1,123 +1,41 @@
-import StatsPanel from "../stats/StatsPanel";
-import Controls from "../controls/Controls";
-import WaypointEditor from "../waypoints/WaypointEditor";
-import JourneyDialog from "../journeys/JourneyDialog";
-import JourneyPanel from "../journeys/JourneyPanel";
-import JourneyList from "../journeys/JourneyList";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
-export default function BottomPanelStack({
-  // data
-  location,
-  error,
-  route,
-  waypoints,
-  journeys,
-  selectedJourney,
-  selectedWaypoint,
-  pendingJourney,
-  isRecording,
+function BottomPanelStack({ children, resetKeys = [] }, ref) {
+  const [expandedPanel, setExpandedPanel] = useState(null);
 
-  // UI state
-  expandedPanel,
+  function togglePanel(panel) {
+    setExpandedPanel((current) => (current === panel ? null : panel));
+  }
 
-  // actions
-  onTogglePanel,
+  function openPanel(panel) {
+    setExpandedPanel(panel);
+  }
 
-  // controls
-  onStart,
-  onStop,
-  onMark,
+  function closePanel() {
+    setExpandedPanel(null);
+  }
 
-  // waypoint
-  onSelectWaypoint,
-  onSaveWaypoint,
+  useImperativeHandle(ref, () => ({
+    openPanel,
+    closePanel,
+  }));
 
-  // dialog
-  onSaveNewJourney,
-  onCancelJourney,
-
-  // selected journey
-  onUpdateJourney,
-  onExitJourney,
-
-  // history
-  onSelectJourney,
-  onDeleteJourney,
-  onClearJourneys,
-}) {
-  const editorVisible =
-    selectedWaypoint != null && (selectedJourney != null || isRecording);
-
-  const markWaypoints = waypoints.filter((point) => point.type === "mark");
+  useEffect(() => {
+    setExpandedPanel(null);
+  }, resetKeys);
 
   return (
-    <>
-      {/* GPS panel */}
-      {isRecording && (
-        <StatsPanel
-          location={location}
-          error={error}
-          route={route}
-          waypoints={waypoints}
-          expanded={expandedPanel === "stats"}
-          onToggle={() => onTogglePanel("stats")}
-        />
-      )}
-
-      {/* Controls */}
-      {!editorVisible && (
-        <Controls
-          isRecording={isRecording}
-          onStart={onStart}
-          onStop={onStop}
-          onMark={onMark}
-        />
-      )}
-
-      {/* Waypoint editor */}
-      {editorVisible && (
-        <WaypointEditor
-          waypoints={markWaypoints}
-          selectedWaypoint={selectedWaypoint}
-          expanded={expandedPanel === "waypoints"}
-          onToggle={() => onTogglePanel("waypoints")}
-          onSelectWaypoint={onSelectWaypoint}
-          onSave={onSaveWaypoint}
-        />
-      )}
-
-      {/* Save dialog */}
-      <JourneyDialog
-        key={pendingJourney?.id}
-        journey={pendingJourney}
-        onSave={onSaveNewJourney}
-        onCancel={onCancelJourney}
-      />
-
-      {/* Selected journey */}
-      {!isRecording && selectedJourney && (
-        <JourneyPanel
-          journey={selectedJourney}
-          expanded={expandedPanel === "journey"}
-          onToggle={() => onTogglePanel("journey")}
-          onExit={onExitJourney}
-          onSave={onUpdateJourney}
-        />
-      )}
-
-      {/* History */}
-      {!isRecording && !selectedJourney && (
-        <JourneyList
-          journeys={journeys}
-          expanded={expandedPanel === "history"}
-          onToggle={() => onTogglePanel("history")}
-          onSelectJourney={onSelectJourney}
-          onDeleteJourney={onDeleteJourney}
-          onClearJourneys={onClearJourneys}
-        />
-      )}
-    </>
+    <div className="flex flex-col">
+      {typeof children === "function"
+        ? children({
+            expandedPanel,
+            togglePanel,
+            openPanel,
+            closePanel,
+          })
+        : children}
+    </div>
   );
 }
 
-
+export default forwardRef(BottomPanelStack);

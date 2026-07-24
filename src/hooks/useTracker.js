@@ -61,7 +61,7 @@ export default function useTracker(location) {
         ...previous,
         {
           ...point,
-          title: `Mark #${markNumber}`,
+          title: `Marker #${markNumber}`,
           description: "",
         },
       ];

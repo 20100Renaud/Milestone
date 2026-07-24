@@ -1,6 +1,6 @@
 // src/components/journeys/JourneyPanel.jsx
 import { useEffect, useState } from "react";
-import { X, Map, Route, Calendar } from "lucide-react";
+import { X, Map, Route, Calendar, CalendarX } from "lucide-react";
 import CollapsiblePanel from "../layout/CollapsiblePanel";
 
 function JourneyPanel({ journey, expanded, onToggle, onExit, onSave }) {
@@ -25,7 +25,7 @@ function JourneyPanel({ journey, expanded, onToggle, onExit, onSave }) {
 
   return (
     <CollapsiblePanel
-      title="Journey"
+      title="Edited journey:"
       summary={journey.title || "Untitled"}
       expanded={expanded}
       onToggle={onToggle}
@@ -68,8 +68,9 @@ function JourneyPanel({ journey, expanded, onToggle, onExit, onSave }) {
           </div>
 
           {journey.endedAt && (
-            <div className="text-xs text-slate-400">
-              Ended: {new Date(journey.endedAt).toLocaleString()}
+            <div className="flex items-center gap-2">
+              <CalendarX size={16} />{" "}
+              <span>{new Date(journey.endedAt).toLocaleString()}</span>
             </div>
           )}
         </div>

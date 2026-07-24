@@ -1,9 +1,12 @@
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import Header from "./components/layout/Header";
 import MapView from "./components/map/MapView";
 import useLocation from "./hooks/useLocation";
 import useTracker from "./hooks/useTracker";
 import BottomPanelStack from "./components/layout/BottomPanelStack";
+import StatsPanel from "./components/stats/StatsPanel";
+import WaypointEditor from "./components/waypoints/WaypointEditor";
+import JourneyPanel from "./components/journeys/JourneyPanel";
 import {
   saveJourney,
   loadJourneys,
@@ -29,8 +32,7 @@ function App() {
   const [selectedJourney, setSelectedJourney] = useState(null);
   const [journeys, setJourneys] = useState(loadJourneys);
   const [pendingJourney, setPendingJourney] = useState(null);
-
-  const [expandedPanel, setExpandedPanel] = useState(null);
+  const bottomPanelRef = useRef(null);
 
   const displayedWaypoints = selectedJourney?.waypoints ?? waypoints;
   const selectedWaypoint =
@@ -49,7 +51,7 @@ function App() {
     if (!id) return;
 
     setSelectedWaypointId(id);
-    setExpandedPanel("waypoints");
+    bottomPanelRef.current?.openPanel("waypoints");
   }
 
   // Manage start
@@ -66,14 +68,12 @@ function App() {
     const firstMark = journey.waypoints.find((p) => p.type === "mark");
 
     setSelectedWaypointId(firstMark?.id ?? null);
-    setExpandedPanel(null);
   }
 
   // Exit a journey
   function handleExitJourney() {
     setSelectedJourney(null);
     setSelectedWaypointId(null);
-    setExpandedPanel(null);
   }
 
   // Select a waypoint
@@ -111,13 +111,15 @@ function App() {
 
     saveJourney(updatedJourney);
 
-    setSelectedJourney(updatedJourney);
-    setJourneys(loadJourneys());
-  }
+    const updated = loadJourneys();
 
-  // Manage collapsed panels
-  function togglePanel(panel) {
-    setExpandedPanel((current) => (current === panel ? null : panel));
+    setJourneys(updated);
+
+    const refreshedJourney = updated.find(
+      (journey) => journey.id === selectedJourney.id,
+    );
+
+    setSelectedJourney(refreshedJourney);
   }
 
   // Update one waypoint inside a journey
@@ -133,14 +135,13 @@ function App() {
       );
 
       setSelectedJourney(refreshedJourney);
-      setExpandedPanel(null);
+      bottomPanelRef.current?.closePanel();
 
       return;
     }
 
     updateWaypoint(id, updates);
-    setExpandedPanel(null);
-
+    bottomPanelRef.current?.closePanel();
     if (!selectedJourney) {
       setSelectedWaypointId(null);
     }
@@ -167,6 +168,10 @@ function App() {
     setSelectedJourney(null);
   }
 
+  // Manage visibility
+  const editorVisible =
+    selectedWaypoint != null && (selectedJourney != null || isRecording);
+
   return (
     <div className="flex flex-col h-screen bg-gray-200">
       <Header />
@@ -185,31 +190,49 @@ function App() {
       </main>
 
       {/* Pannels */}
+
       <BottomPanelStack
-        location={location}
-        error={error}
-        route={selectedJourney?.route ?? route}
-        waypoints={displayedWaypoints}
-        journeys={journeys}
-        selectedJourney={selectedJourney}
-        selectedWaypoint={selectedWaypoint}
-        pendingJourney={pendingJourney}
-        isRecording={isRecording}
-        expandedPanel={expandedPanel}
-        onTogglePanel={togglePanel}
-        onStart={handleStart}
-        onStop={stopRecording}
-        onMark={handleMark}
-        onSelectWaypoint={handleSelectWaypoint}
-        onSaveWaypoint={handleUpdateWaypoint}
-        onSaveNewJourney={handleSaveNewJourney}
-        onUpdateJourney={handleUpdateJourney}
-        onCancelJourney={() => setPendingJourney(null)}
-        onExitJourney={handleExitJourney}
-        onSelectJourney={handleSelectJourney}
-        onDeleteJourney={handleDeleteJourney}
-        onClearJourneys={handleClearJourneys}
-      />
+        ref={bottomPanelRef}
+        resetKeys={[selectedJourney?.id, isRecording]}
+      >
+        {({ expandedPanel, togglePanel }) => (
+          <>
+            {isRecording && (
+              <StatsPanel
+                location={location}
+                error={error}
+                route={route}
+                waypoints={waypoints}
+                expanded={expandedPanel === "stats"}
+                onToggle={() => togglePanel("stats")}
+              />
+            )}
+
+            {editorVisible && (
+              <WaypointEditor
+                waypoints={displayedWaypoints.filter(
+                  (point) => point.type === "mark",
+                )}
+                selectedWaypoint={selectedWaypoint}
+                expanded={expandedPanel === "waypoints"}
+                onToggle={() => togglePanel("waypoints")}
+                onSelectWaypoint={handleSelectWaypoint}
+                onSave={handleUpdateWaypoint}
+              />
+            )}
+
+            {!isRecording && selectedJourney && (
+              <JourneyPanel
+                journey={selectedJourney}
+                expanded={expandedPanel === "journey"}
+                onToggle={() => togglePanel("journey")}
+                onExit={handleExitJourney}
+                onSave={handleUpdateJourney}
+              />
+            )}
+          </>
+        )}
+      </BottomPanelStack>
     </div>
   );
 }
