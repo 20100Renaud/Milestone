@@ -2,7 +2,19 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Controls from "../controls/Controls";
 import JourneyList from "../journeys/JourneyList";
 
-function BottomPanelStack({ children, resetKeys = [] }, ref) {
+function BottomPanelStack(
+  {
+    children,
+    resetKeys = [],
+    onStart,
+    onStop,
+    onMark,
+    onSelectJourney,
+    onDeleteJourney,
+    onClearJourneys,
+  },
+  ref,
+) {
   const [expandedPanel, setExpandedPanel] = useState(null);
 
   function togglePanel(panel) {
@@ -34,6 +46,12 @@ function BottomPanelStack({ children, resetKeys = [] }, ref) {
             togglePanel,
             openPanel,
             closePanel,
+            onStart,
+            onStop,
+            onMark,
+            onSelectJourney,
+            onDeleteJourney,
+            onClearJourneys,
           })
         : children}
     </div>

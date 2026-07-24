@@ -6,7 +6,9 @@ import useTracker from "./hooks/useTracker";
 import BottomPanelStack from "./components/layout/BottomPanelStack";
 import StatsPanel from "./components/stats/StatsPanel";
 import WaypointEditor from "./components/waypoints/WaypointEditor";
+import Controls from "./components/controls/Controls";
 import JourneyPanel from "./components/journeys/JourneyPanel";
+import JourneyList from "./components/journeys/JourneyList";
 import {
   saveJourney,
   loadJourneys,
@@ -212,7 +214,16 @@ function App() {
         onDeleteJourney={handleDeleteJourney}
         onClearJourneys={handleClearJourneys}
       >
-        {({ expandedPanel, togglePanel }) => (
+        {({
+          expandedPanel,
+          togglePanel,
+          onStart,
+          onStop,
+          onMark,
+          onSelectJourney,
+          onDeleteJourney,
+          onClearJourneys,
+        }) => (
           <>
             {isRecording && (
               <StatsPanel
