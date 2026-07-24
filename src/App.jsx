@@ -194,6 +194,23 @@ function App() {
       <BottomPanelStack
         ref={bottomPanelRef}
         resetKeys={[selectedJourney?.id, isRecording]}
+        location={location}
+        error={error}
+        route={selectedJourney?.route ?? route}
+        waypoints={displayedWaypoints}
+        journeys={journeys}
+        selectedJourney={selectedJourney}
+        selectedWaypoint={selectedWaypoint}
+        isRecording={isRecording}
+        onStart={handleStart}
+        onStop={stopRecording}
+        onMark={handleMark}
+        onSelectWaypoint={handleSelectWaypoint}
+        onSaveWaypoint={handleUpdateWaypoint}
+        onExitJourney={handleExitJourney}
+        onSelectJourney={handleSelectJourney}
+        onDeleteJourney={handleDeleteJourney}
+        onClearJourneys={handleClearJourneys}
       >
         {({ expandedPanel, togglePanel }) => (
           <>
@@ -205,6 +222,15 @@ function App() {
                 waypoints={waypoints}
                 expanded={expandedPanel === "stats"}
                 onToggle={() => togglePanel("stats")}
+              />
+            )}
+
+            {!editorVisible && (
+              <Controls
+                isRecording={isRecording}
+                onStart={onStart}
+                onStop={onStop}
+                onMark={onMark}
               />
             )}
 
@@ -228,6 +254,17 @@ function App() {
                 onToggle={() => togglePanel("journey")}
                 onExit={handleExitJourney}
                 onSave={handleUpdateJourney}
+              />
+            )}
+
+            {!isRecording && !selectedJourney && (
+              <JourneyList
+                journeys={journeys}
+                expanded={expandedPanel === "history"}
+                onToggle={() => togglePanel("history")}
+                onSelectJourney={onSelectJourney}
+                onDeleteJourney={onDeleteJourney}
+                onClearJourneys={onClearJourneys}
               />
             )}
           </>

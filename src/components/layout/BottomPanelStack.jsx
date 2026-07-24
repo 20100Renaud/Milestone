@@ -1,4 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import Controls from "../controls/Controls";
+import JourneyList from "../journeys/JourneyList";
 
 function BottomPanelStack({ children, resetKeys = [] }, ref) {
   const [expandedPanel, setExpandedPanel] = useState(null);
