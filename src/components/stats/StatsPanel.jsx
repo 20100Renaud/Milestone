@@ -1,8 +1,16 @@
 import { calculateRouteDistance } from "../../utils/distance";
+import { getAccuracyStatus } from "../../utils/gps";
 import CollapsiblePanel from "../layout/CollapsiblePanel";
+
+export const accuracyClass = (accuracy) => {
+  return getAccuracyStatus(accuracy).className;
+};
 
 function StatsPanel({ location, error, route, waypoints, expanded, onToggle }) {
   const distance = calculateRouteDistance(route);
+
+  const accuracy = location?.coords?.accuracy;
+  const status = getAccuracyStatus(accuracy);
 
   if (!location) {
     return (
@@ -17,27 +25,25 @@ function StatsPanel({ location, error, route, waypoints, expanded, onToggle }) {
     );
   }
 
-  const accuracyClass =
-    location.accuracy < 10
-      ? "text-green-400"
-      : location.accuracy <= 15
-        ? "text-orange-400"
-        : "text-red-400";
-
   return (
     <CollapsiblePanel
       title="GPS"
       summary={
-        <span className={accuracyClass}>
-          Accuracy {location.accuracy.toFixed(1)} m
+        <span className={status.className}>
+          {status.label} · ±{accuracy?.toFixed(1)} m
         </span>
       }
       expanded={expanded}
       onToggle={onToggle}
     >
       <div className="space-y-2 text-sm">
-        <p>Latitude: {location.latitude.toFixed(6)}</p>
-        <p>Longitude: {location.longitude.toFixed(6)}</p>
+        <p>Latitude: {location.coords.latitude.toFixed(6)}</p>
+        <p>Longitude: {location.coords.longitude.toFixed(6)}</p>
+
+        <p className={status.className}>
+          GPS accuracy: ±{accuracy?.toFixed(1)} m ({status.label})
+        </p>
+
         <p>GPS points: {route.length}</p>
         <p>Markers: {waypoints.length}</p>
 

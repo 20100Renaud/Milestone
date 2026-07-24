@@ -6,6 +6,7 @@ import WaypointEditor from "../waypoints/WaypointEditor";
 import JourneyDialog from "../journeys/JourneyDialog";
 import JourneyPanel from "../journeys/JourneyPanel";
 import JourneyList from "../journeys/JourneyList";
+import GpsStatus from "../gps/GpsStatus";
 
 function BottomPanelStack(
   {
@@ -46,7 +47,7 @@ function BottomPanelStack(
   const editorVisible =
     selectedWaypoint != null && (selectedJourney != null || isRecording);
 
-  const markWaypoints = waypoints.filter((p) => p.type === "mark");
+  const markWaypoints = waypoints.filter((p) => p.type === "mark") ?? [];
 
   function togglePanel(panel) {
     setExpandedPanel((current) => (current === panel ? null : panel));
@@ -81,6 +82,8 @@ function BottomPanelStack(
           onToggle={() => togglePanel("stats")}
         />
       )}
+
+      {!isRecording && <GpsStatus location={location} error={error} />}
 
       {!editorVisible && (
         <Controls

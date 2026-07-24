@@ -34,7 +34,7 @@ function JourneyList({
           <p className="p-4 text-center text-slate-400">No saved journeys.</p>
         ) : (
           <div className="space-y-3 p-3">
-            <p className="p-1 text-center text-xs text-slate-400">Click to edit a journey.</p>
+            <p className="pb-1 text-center text-xs text-slate-400">Click to edit a journey.</p>
             {journeys.map((journey) => {
               const marks = journey.waypoints.filter(
                 (point) => point.type === "mark",
