@@ -159,7 +159,7 @@ function App() {
   }
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen bg-gray-200">
       <Header />
 
       <main className="flex-1 overflow-hidden">

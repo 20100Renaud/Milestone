@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import { useState } from "react";
 
 function JourneyDialog({ journey, onSave, onCancel }) {
@@ -19,9 +20,9 @@ function JourneyDialog({ journey, onSave, onCancel }) {
     onCancel();
   }
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-md rounded-lg bg-slate-900 p-6 text-white">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
+      <div className="w-full max-w-md rounded-lg bg-slate-900 p-6 text-white shadow-xl">
         <h2 className="mb-4 text-xl font-semibold">Save Journey</h2>
 
         <div className="space-y-4">
@@ -65,7 +66,8 @@ function JourneyDialog({ journey, onSave, onCancel }) {
           </div>
         </div>
       </div>
-    </div>
+      document.body,
+    </div>,
   );
 }
 
