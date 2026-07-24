@@ -1,46 +1,59 @@
 import { calculateRouteDistance } from "../../utils/distance";
+import CollapsiblePanel from "../layout/CollapsiblePanel";
 
-function StatsPanel({ location, error, route, waypoints }) {
+function StatsPanel({ location, error, route, waypoints, expanded, onToggle }) {
   const distance = calculateRouteDistance(route);
 
   if (!location) {
     return (
-      <div className="bg-slate-100 p-4">
+      <CollapsiblePanel
+        title="GPS"
+        summary="Waiting for GPS..."
+        expanded={expanded}
+        onToggle={onToggle}
+      >
         {error && <p>{error}</p>}
-        <p>Waiting for GPS...</p>
-      </div>
+      </CollapsiblePanel>
     );
   }
 
   const accuracyClass =
     location.accuracy < 10
-      ? "text-green-500"
+      ? "text-green-400"
       : location.accuracy <= 15
-        ? "text-orange-500"
-        : "text-red-500";
+        ? "text-orange-400"
+        : "text-red-400";
 
   return (
-    <div className="bg-slate-100 p-4">
-      <div className="flex gap-2">
-        <p>Lat: {location.latitude.toFixed(6)}</p>
-        <p>Lng: {location.longitude.toFixed(6)}</p>
-      </div>
+    <CollapsiblePanel
+      title="GPS"
+      summary={
+        <span className={accuracyClass}>
+          Accuracy {location.accuracy.toFixed(1)} m
+        </span>
+      }
+      expanded={expanded}
+      onToggle={onToggle}
+    >
+      <div className="space-y-2 text-sm">
+        <p>Latitude: {location.latitude.toFixed(6)}</p>
+        <p>Longitude: {location.longitude.toFixed(6)}</p>
 
-      <p className={accuracyClass}>
-        Accuracy: {location.accuracy.toFixed(1)} m
-      </p>
+        <p className={accuracyClass}>
+          Accuracy: {location.accuracy.toFixed(1)} m
+        </p>
 
-      <div className="flex gap-2">
         <p>GPS points: {route.length}</p>
-        <p>Saved points: {waypoints.length}</p>
+        <p>Markers: {waypoints.length}</p>
+
         <p>
-          Distance:{" "}
+          Distance{" "}
           {distance >= 1000
             ? `${(distance / 1000).toFixed(2)} km`
             : `${distance.toFixed(1)} m`}
         </p>
       </div>
-    </div>
+    </CollapsiblePanel>
   );
 }
 

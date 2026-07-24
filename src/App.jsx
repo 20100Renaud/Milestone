@@ -6,6 +6,7 @@ import Controls from "./components/controls/Controls";
 import useLocation from "./hooks/useLocation";
 import useTracker from "./hooks/useTracker";
 import WaypointEditor from "./components/waypoints/WaypointEditor";
+import SelectedJourneyBar from "./components/journeys/SelectedJourneyBar";
 import JourneyDialog from "./components/journeys/JourneyDialog";
 import JourneyList from "./components/journeys/JourneyList";
 import {
@@ -34,16 +35,11 @@ function App() {
   const [journeys, setJourneys] = useState(loadJourneys);
   const [pendingJourney, setPendingJourney] = useState(null);
 
-  const [historyOpen, setHistoryOpen] = useState(false);
-  const [editorExpanded, setEditorExpanded] = useState(false);
+  const [expandedPanel, setExpandedPanel] = useState(null);
 
   const displayedWaypoints = selectedJourney?.waypoints ?? waypoints;
   const selectedWaypoint =
     displayedWaypoints.find((point) => point.id === selectedWaypointId) ?? null;
-
-  const markerCount = displayedWaypoints.filter(
-    (point) => point.type === "mark",
-  ).length;
 
   // Default journey title
   const nextNumber =
@@ -59,7 +55,7 @@ function App() {
     if (!id) return;
 
     setSelectedWaypointId(id);
-    setEditorExpanded(true);
+    setExpandedPanel("waypoints");
   }
 
   // Manage start
@@ -76,7 +72,14 @@ function App() {
     const firstMark = journey.waypoints.find((p) => p.type === "mark");
 
     setSelectedWaypointId(firstMark?.id ?? null);
-    setEditorExpanded(false);
+    setExpandedPanel(null);
+  }
+
+  // Exit a journey
+  function handleExitJourney() {
+    setSelectedJourney(null);
+    setSelectedWaypointId(null);
+    setExpandedPanel(null);
   }
 
   // Select a waypoint
@@ -84,7 +87,7 @@ function App() {
     setSelectedWaypointId(id);
 
     if (selectedJourney) {
-      setEditorExpanded(true);
+      setExpandedPanel("waypoints");
     }
   }
 
@@ -109,7 +112,12 @@ function App() {
   // Manage editor visibility
   const editorVisible =
     selectedWaypoint != null &&
-    (selectedJourney != null || (isRecording && editorExpanded));
+    (selectedJourney != null || isRecording);
+
+  // Manage collapsed panels
+  function togglePanel(panel) {
+    setExpandedPanel((current) => (current === panel ? null : panel));
+  }
 
   // Update one waypoint inside a journey
   function handleUpdateWaypoint(id, updates) {
@@ -124,13 +132,13 @@ function App() {
       );
 
       setSelectedJourney(refreshedJourney);
-      setEditorExpanded(false);
+      setExpandedPanel(null);
 
       return;
     }
 
     updateWaypoint(id, updates);
-    setEditorExpanded(false);
+    setExpandedPanel(null);
 
     if (!selectedJourney) {
       setSelectedWaypointId(null);
@@ -179,6 +187,8 @@ function App() {
         error={error}
         route={selectedJourney?.route ?? route}
         waypoints={selectedJourney?.waypoints ?? waypoints}
+        expanded={expandedPanel === "stats"}
+        onToggle={() => togglePanel("stats")}
       />
 
       {!editorVisible && (
@@ -196,9 +206,9 @@ function App() {
             (point) => point.type === "mark",
           )}
           selectedWaypoint={selectedWaypoint}
-          expanded={editorExpanded}
-          onToggle={() => setEditorExpanded((v) => !v)}
-          onSelectWaypoint={setSelectedWaypointId}
+          expanded={expandedPanel === "waypoints"}
+          onToggle={() => togglePanel("waypoints")}
+          onSelectWaypoint={handleSelectWaypoint}
           onSave={handleUpdateWaypoint}
         />
       )}
@@ -210,11 +220,18 @@ function App() {
         onCancel={() => setPendingJourney(null)}
       />
 
+      {!isRecording && selectedJourney && (
+        <SelectedJourneyBar
+          journey={selectedJourney}
+          onExit={handleExitJourney}
+        />
+      )}
+
       {!isRecording && (
         <JourneyList
           journeys={journeys}
-          open={historyOpen}
-          onToggle={() => setHistoryOpen((open) => !open)}
+          expanded={expandedPanel === "history"}
+          onToggle={() => togglePanel("history")}
           onSelectJourney={handleSelectJourney}
           onDeleteJourney={handleDeleteJourney}
           onClearJourneys={handleClearJourneys}
