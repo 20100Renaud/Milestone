@@ -11,3 +11,5 @@ Frontend only:
 - JavaScript
 - Leaflet.js (map)
 - Indexe
+
+Local storage
