@@ -11,27 +11,31 @@ export function loadJourneys() {
   }
 }
 
-// SAVE THE JOURNEY
+// CREATE OR UPDATE JOURNEY
 export function saveJourney(journey) {
   const journeys = loadJourneys();
-  const exists = journeys.some((j) => j.id === journey.id);
 
-  if (exists) return;
-
-  journeys.push(journey);
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(journeys));
-
-  console.log("Stored journeys:", localStorage.getItem(STORAGE_KEY));
-}
-
-// UPDATE A JOURNEY
-export function updateJourney(id, updates) {
-  const journeys = loadJourneys().map((journey) =>
-    journey.id === id ? { ...journey, ...updates } : journey,
+  const exists = journeys.some(
+    (item) => item.id === journey.id
   );
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(journeys));
+  const updatedJourneys = exists
+    ? journeys.map((item) =>
+        item.id === journey.id
+          ? { ...item, ...journey }
+          : item,
+      )
+    : [...journeys, journey];
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(updatedJourneys),
+  );
+
+  console.log(
+    "Stored journeys:",
+    localStorage.getItem(STORAGE_KEY),
+  );
 }
 
 // UPDATE ONE WAYPOINT INSIDE A JOURNEY
