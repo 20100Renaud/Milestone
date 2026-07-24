@@ -20,7 +20,7 @@ function JourneyDialog({ journey, onSave, onCancel }) {
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="w-full max-w-md rounded-lg bg-slate-900 p-6 text-white">
         <h2 className="mb-4 text-xl font-semibold">Save Journey</h2>
 
@@ -31,7 +31,7 @@ function JourneyDialog({ journey, onSave, onCancel }) {
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Morning walk"
+              placeholder="Journey Title"
               className="w-full rounded bg-slate-800 p-2"
             />
           </div>

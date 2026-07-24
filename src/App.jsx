@@ -40,9 +40,17 @@ function App() {
   const displayedWaypoints = selectedJourney?.waypoints ?? waypoints;
   const selectedWaypoint =
     displayedWaypoints.find((point) => point.id === selectedWaypointId) ?? null;
+
   const markerCount = displayedWaypoints.filter(
     (point) => point.type === "mark",
   ).length;
+
+  // Default journey title
+  const nextNumber =
+    journeys.reduce((max, journey) => {
+      const match = journey.title?.match(/^Journey #(\d+)$/);
+      return match ? Math.max(max, Number(match[1])) : max;
+    }, 0) + 1;
 
   // Mark id
   function handleMark() {
@@ -90,12 +98,11 @@ function App() {
   function handleSaveJourney(title, description) {
     saveJourney({
       ...pendingJourney,
-      title,
+      title: title || `Journey #${nextNumber}`,
       description,
     });
 
     setJourneys(loadJourneys());
-
     setPendingJourney(null);
   }
 
