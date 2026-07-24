@@ -38,11 +38,6 @@ function StatsPanel({ location, error, route, waypoints, expanded, onToggle }) {
       <div className="space-y-2 text-sm">
         <p>Latitude: {location.latitude.toFixed(6)}</p>
         <p>Longitude: {location.longitude.toFixed(6)}</p>
-
-        <p className={accuracyClass}>
-          Accuracy: {location.accuracy.toFixed(1)} m
-        </p>
-
         <p>GPS points: {route.length}</p>
         <p>Markers: {waypoints.length}</p>
 

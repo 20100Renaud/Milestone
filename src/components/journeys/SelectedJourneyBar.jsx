@@ -20,7 +20,7 @@ function SelectedJourneyBar({ journey, onExit }) {
         className="rounded p-2 text-slate-300 hover:bg-slate-700 hover:text-white"
         title="Back to live mode"
       >
-        <X size={20} />
+        <X size={20} />Close
       </button>
     </div>
   );

@@ -94,7 +94,7 @@ function WaypointEditor({
 
         <button
           onClick={handleSave}
-          className="flex items-center gap-2 rounded bg-blue-600 px-4 py-2"
+          className="flex mx-auto items-center gap-2 rounded bg-blue-600 px-4 py-2"
         >
           <Pencil size={16} />
           Save

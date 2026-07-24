@@ -66,8 +66,8 @@ function JourneyDialog({ journey, onSave, onCancel }) {
           </div>
         </div>
       </div>
-      document.body,
     </div>,
+    document.body
   );
 }
 
